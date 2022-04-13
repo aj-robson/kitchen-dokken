@@ -37,6 +37,7 @@ module Kitchen
       default_config :profile_ruby, false
       default_config :docker_info, docker_info
       default_config :docker_host_url, default_docker_host
+      default_config :force_upload, false
 
       # Dokken is weird - the provisioner inherits from ChefZero but does not install
       # chef-client. The version of chef used is customized by users in the driver
@@ -58,7 +59,7 @@ module Kitchen
         create_sandbox
         write_run_command(run_command)
         instance.transport.connection(state) do |conn|
-          if remote_docker_host?
+          if remote_docker_host? || config[:force_upload]
             info("Transferring files to #{instance.to_str}")
             conn.upload(sandbox_dirs, config[:root_path])
           end
